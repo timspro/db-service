@@ -1,5 +1,5 @@
 {
-  "name": "db-service",
+  "name": "@tim-code/db-service",
   "version": "0.1.0",
   "description": "",
   "type": "module",
@@ -33,5 +33,8 @@
     "ignorePatterns": [
       "dist"
     ]
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
