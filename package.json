@@ -1,0 +1,37 @@
+{
+  "name": "db-service",
+  "version": "0.1.0",
+  "description": "",
+  "type": "module",
+  "scripts": {
+    "start": "concurrently \"npm run build -- --watch\" \"npm run backend -- --frontend dist --port 4000\"",
+    "backend": "neptune-server --log --routes backend --watch package-lock.json --postSize 10mb",
+    "test": "ROUTES_DIR=backend node --no-warnings --experimental-vm-modules node_modules/.bin/jest",
+    "build": "npx webpack-cli -o \"${DIST:-./dist}\""
+  },
+  "author": "",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "@tim-code/autotest": "^0.10.3",
+    "@tim-code/eslint-config": "^0.6.5",
+    "@tim-code/jest-config-server": "^0.2.2",
+    "jest": "^27.5.1"
+  },
+  "dependencies": {
+    "@google-cloud/firestore": "^5.0.2",
+    "@tim-code/browser-command": "^0.3.5",
+    "@tim-code/browser-util": "^0.2.5",
+    "@tim-code/firestore-util": "^0.6.1",
+    "@tim-code/server": "^0.8.9",
+    "concurrently": "^7.0.0",
+    "webpack": "^5.69.1",
+    "webpack-cli": "^4.9.2"
+  },
+  "eslintConfig": {
+    "extends": "@tim-code",
+    "root": true,
+    "ignorePatterns": [
+      "dist"
+    ]
+  }
+}
