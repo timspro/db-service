@@ -1,4 +1,4 @@
-const name = process.env.npm_package_name.split("-").shift()
+const name = process.env.npm_package_name.split("/").pop().split("-").shift()
 
 export default {
   entry: `./frontend/index.js`,
