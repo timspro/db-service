@@ -4,6 +4,9 @@
     <link rel="icon" href="data:;base64,=" />
   </head>
   <body>
-    <script src="/db.js"></script>
+    <script type="module">
+      import * as db from "./db.js"
+      window.db = db
+    </script>
   </body>
 </html>

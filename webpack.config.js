@@ -5,7 +5,10 @@ export default {
   mode: "development",
   output: {
     filename: `${name}.js`,
-    library: name,
-    libraryTarget: "window",
+    libraryTarget: "module",
+    environment: { module: true },
+  },
+  experiments: {
+    outputModule: true,
   },
 }
