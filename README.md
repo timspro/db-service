@@ -2,7 +2,9 @@
 
 Allows querying and writing to a Firestore database via the browser console.
 
-This project assumes that your Firestore credentials can be automatically found by the SDK, probably due to setting `GOOGLE_APPLICATION_CREDENTIALS` in your `.bash_profile`.
+This project assumes that your Firestore-enabled service account can be automatically found by the SDK, probably due to setting `GOOGLE_APPLICATION_CREDENTIALS` in your `.bash_profile`.
+
+See https://cloud.google.com/docs/authentication/getting-started.
 
 ## Install
 
