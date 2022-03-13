@@ -2,11 +2,11 @@ import * as command from "@tim-code/browser-command"
 
 const run = command.factory(import.meta.url)
 
-export function query(collection, options = {}) {
+export function query(collection, { silent, ...options } = {}) {
   if (typeof options === "number") {
     options = { limit: options }
   }
-  return run("query", { collection, options })
+  return run("query", { collection, options }, { silent })
 }
 
 export function q(collection, where, options) {
