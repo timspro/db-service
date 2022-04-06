@@ -2,15 +2,31 @@ import * as command from "@tim-code/browser-command"
 
 const run = command.factory(import.meta.url)
 
-const runRequest = command.factory(import.meta.url, { method: "request" })
+const memory = new Map()
 
 export function query(collection, { silent = false, cache = false, ...options } = {}) {
+  if (cache === true) {
+    cache = 3600
+  }
   if (typeof options === "number") {
     options = { limit: options }
   }
-  cache = cache === true && "default"
-  cache = cache || "no-store" // "reload" stores for future use
-  return runRequest("query", { body: { collection, options }, cache }, { silent })
+  const clauses = { collection, options }
+  const hash = JSON.stringify(clauses)
+  if (typeof cache === "number") {
+    const found = memory.get(hash)
+    if (found) {
+      const age = (Date.now() - found.timestamp) / 1000
+      if (age < cache) {
+        return found.result
+      }
+    }
+  }
+  const result = run("query", clauses, { silent })
+  if (typeof cache === "number") {
+    memory.set(hash, { timestamp: Date.now(), result })
+  }
+  return result
 }
 
 export function q(collection, where, options) {

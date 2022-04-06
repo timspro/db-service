@@ -1,6 +1,5 @@
 import { Firestore } from "@google-cloud/firestore"
 import * as util from "@tim-code/firestore-util"
-import etag from "etag"
 import { Script } from "vm"
 
 const db = new Firestore()
@@ -11,19 +10,12 @@ function send(response, result) {
 
 export async function query(request, response) {
   const args = { ...request.body, ...request.query }
-  const hash = etag(JSON.stringify(args))
-  if (request.get("If-None-Match") === hash) {
-    response.sendStatus(304)
-  } else {
-    const { collection, options: { ids, ...options } = {} } = args
-    const snapshot = await util.query(db, collection, options)
-    response.setHeader("ETag", hash)
-    response.setHeader("Vary", "ETag")
-    send(
-      response,
-      snapshot.map((doc) => (ids ? doc.id : doc.data()))
-    )
-  }
+  const { collection, options: { ids, ...options } = {} } = args
+  const snapshot = await util.query(db, collection, options)
+  send(
+    response,
+    snapshot.map((doc) => (ids ? doc.id : doc.data()))
+  )
 }
 
 function toFunction(string, context) {

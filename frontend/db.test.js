@@ -23,14 +23,12 @@ beforeEach(async () => {
   await util.remove(db, CLEAN, { where: [] })
 })
 
-const silent = { silent: true }
-
-autotest(query)(SANDBOX, silent)(data)
+autotest(query)(SANDBOX, { silent: true })(data)
 
 const queryAfter = { timeout: 10000, after: () => util.query(db, SANDBOX).then(util.unbox) }
 
 const inserted = { name: "c", count: 3 }
-autotest(insert, queryAfter)(SANDBOX, [[inserted.name, inserted]], silent)(
+autotest(insert, queryAfter)(SANDBOX, [[inserted.name, inserted]], { silent: true })(
   data.concat([inserted])
 )
 
@@ -53,3 +51,13 @@ const queryBothAfter = {
 autotest(copy, queryBothAfter)(SANDBOX, CLEAN, { where: [], silent: true })([data, data])
 
 autotest(move, queryBothAfter)(SANDBOX, CLEAN, { where: [], silent: true })([[], data])
+
+async function cacheSetup() {
+  await query(SANDBOX, { silent: true, cache: true })
+  await util.insert(db, SANDBOX, [[inserted.name, inserted]])
+  const elements = await util.query(db, SANDBOX).then(util.unbox)
+  expect(elements.length).toBe(3)
+}
+autotest(query, { setup: cacheSetup, only: true })(SANDBOX, { silent: true, cache: true })(
+  data
+)
