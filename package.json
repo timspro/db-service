@@ -1,30 +1,31 @@
 {
   "name": "@tim-code/db-service",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "",
   "type": "module",
   "scripts": {
     "start": "concurrently \"npm run build -- --watch\" \"npm run backend -- --frontend dist --port 4000\"",
-    "backend": "server --log --routes backend --watch package-lock.json --postSize 10mb",
-    "test": "ROUTES_DIR=backend node --no-warnings --experimental-vm-modules node_modules/.bin/jest",
+    "backend": "server --log --routes backend --watch package-lock.json --postSize 10mb --expressRoute",
+    "test": "ROUTES_DIR=backend node --no-warnings --experimental-vm-modules node_modules/.bin/jest --runInBand",
     "build": "npx webpack-cli -o \"${DIST:-./dist}\""
   },
   "author": "",
   "license": "UNLICENSED",
   "devDependencies": {
-    "@tim-code/autotest": "^1.0.1",
-    "@tim-code/eslint-config": "^0.6.5",
-    "@tim-code/jest-config-server": "^0.2.2",
+    "@tim-code/autotest": "^1.0.2",
+    "@tim-code/eslint-config": "^0.7.1",
+    "@tim-code/jest-config-server": "^0.3.2",
     "jest": "^27.5.1"
   },
   "dependencies": {
     "@google-cloud/firestore": "^5.0.2",
-    "@tim-code/browser-command": "^0.3.5",
-    "@tim-code/browser-util": "^0.2.5",
-    "@tim-code/firestore-util": "^0.6.1",
+    "@tim-code/browser-command": "^0.4.1",
+    "@tim-code/browser-util": "^0.3.0",
+    "@tim-code/firestore-util": "^0.7.0",
     "@tim-code/server": "^0.9.0",
-    "concurrently": "^7.0.0",
-    "webpack": "^5.70.0",
+    "concurrently": "^7.1.0",
+    "etag": "^1.8.1",
+    "webpack": "^5.71.0",
     "webpack-cli": "^4.9.2"
   },
   "eslintConfig": {
