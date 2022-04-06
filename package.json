@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "start": "concurrently \"npm run build -- --watch\" \"npm run backend -- --frontend dist --port 4000\"",
-    "backend": "server --log --routes backend --watch package-lock.json --postSize 10mb --expressRoute",
+    "backend": "server --log --routes backend --watch package-lock.json --postSize 10mb",
     "test": "ROUTES_DIR=backend node --no-warnings --experimental-vm-modules node_modules/.bin/jest --runInBand",
     "build": "npx webpack-cli -o \"${DIST:-./dist}\""
   },

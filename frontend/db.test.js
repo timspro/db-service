@@ -58,6 +58,4 @@ async function cacheSetup() {
   const elements = await util.query(db, SANDBOX).then(util.unbox)
   expect(elements.length).toBe(3)
 }
-autotest(query, { setup: cacheSetup, only: true })(SANDBOX, { silent: true, cache: true })(
-  data
-)
+autotest(query, { setup: cacheSetup })(SANDBOX, { silent: true, cache: true })(data)

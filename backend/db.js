@@ -4,18 +4,9 @@ import { Script } from "vm"
 
 const db = new Firestore()
 
-function send(response, result) {
-  response.json({ result })
-}
-
-export async function query(request, response) {
-  const args = { ...request.body, ...request.query }
-  const { collection, options: { ids, ...options } = {} } = args
+export async function query({ collection, options: { ids, ...options } = {} }) {
   const snapshot = await util.query(db, collection, options)
-  send(
-    response,
-    snapshot.map((doc) => (ids ? doc.id : doc.data()))
-  )
+  return snapshot.map((doc) => (ids ? doc.id : doc.data()))
 }
 
 function toFunction(string, context) {
@@ -25,47 +16,27 @@ function toFunction(string, context) {
   return undefined
 }
 
-export async function copy(request, response) {
-  let { collection, dest, name, transform, context, options } = {
-    ...request.body,
-    ...request.query,
-  }
+export function copy({ collection, dest, name, transform, context, options }) {
   name = toFunction(name, context)
   transform = toFunction(transform, context)
-  send(response, await util.copy(db, collection, dest, { ...options, name, transform }))
+  return util.copy(db, collection, dest, { ...options, name, transform })
 }
 
-export async function move(request, response) {
-  let { collection, dest, name, transform, context, options } = {
-    ...request.body,
-    ...request.query,
-  }
+export function move({ collection, dest, name, transform, context, options }) {
   name = toFunction(name, context)
   transform = toFunction(transform, context)
-  send(response, await util.move(db, collection, dest, { ...options, name, transform }))
+  return util.move(db, collection, dest, { ...options, name, transform })
 }
 
-export async function remove(request, response) {
-  const { collection, options } = {
-    ...request.body,
-    ...request.query,
-  }
-  send(response, await util.remove(db, collection, options))
+export function remove({ collection, options }) {
+  return util.remove(db, collection, options)
 }
 
-export async function insert(request, response) {
-  const { collection, data, options } = {
-    ...request.body,
-    ...request.query,
-  }
-  send(response, await util.insert(db, collection, data, options))
+export function insert({ collection, data, options }) {
+  return util.insert(db, collection, data, options)
 }
 
-export async function update(request, response) {
-  let { collection, transform, context, options } = {
-    ...request.body,
-    ...request.query,
-  }
+export function update({ collection, transform, context, options }) {
   transform = toFunction(transform, context)
-  send(response, await util.update(db, collection, { ...options, transform }))
+  return util.update(db, collection, { ...options, transform })
 }
