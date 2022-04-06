@@ -4,7 +4,7 @@ const run = command.factory(import.meta.url)
 
 const memory = new Map()
 
-export function query(collection, { silent = false, cache = false, ...options } = {}) {
+export async function query(collection, { silent = false, cache = false, ...options } = {}) {
   if (cache === true) {
     cache = 3600
   }
@@ -18,11 +18,15 @@ export function query(collection, { silent = false, cache = false, ...options } 
     if (found) {
       const age = (Date.now() - found.timestamp) / 1000
       if (age < cache) {
+        if (!silent) {
+          // eslint-disable-next-line no-console
+          console.log(found.result)
+        }
         return found.result
       }
     }
   }
-  const result = run("query", clauses, { silent })
+  const result = await run("query", clauses, { silent })
   if (typeof cache === "number") {
     memory.set(hash, { timestamp: Date.now(), result })
   }
