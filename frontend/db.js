@@ -1,8 +1,31 @@
 import * as command from "@tim-code/browser-command"
 
-const run = command.factory(import.meta.url)
+const run = command.factory(import.meta.url, { type: "request", defaults: { method: "GET" } })
 
-const memory = new Map()
+const cachePromises = {}
+;(async () => {
+  try {
+    const registration = await navigator.serviceWorker.register("db-service-worker.js", {
+      scope: "/db/",
+    })
+    if (registration.installing) {
+      console.log("service worker installing")
+    } else if (registration.waiting) {
+      console.log("service worker installed")
+    } else if (registration.active) {
+      console.log("service worker active")
+    }
+  } catch (error) {
+    console.error(`registration failed with ${error}`)
+  }
+  // navigator.serviceWorker.addEventListener("message", ({ data }) => {
+  //   debugger
+  //   const { uuid, response } = data
+  //   // eslint-disable-next-line no-console
+  //   console.log(`received: ${response}`)
+  //   cachePromises[uuid](response)
+  // })
+})()
 
 export async function query(collection, { silent = false, cache = false, ...options } = {}) {
   if (cache === true) {
@@ -11,25 +34,21 @@ export async function query(collection, { silent = false, cache = false, ...opti
   if (typeof options === "number") {
     options = { limit: options }
   }
-  const clauses = { collection, options }
-  const hash = JSON.stringify(clauses)
-  if (typeof cache === "number") {
-    const found = memory.get(hash)
-    if (found) {
-      const age = (Date.now() - found.timestamp) / 1000
-      if (age < cache) {
-        if (!silent) {
-          // eslint-disable-next-line no-console
-          console.log(found.result)
-        }
-        return found.result
-      }
-    }
-  }
-  const result = await run("query", clauses, { silent })
-  if (typeof cache === "number") {
-    memory.set(hash, { timestamp: Date.now(), result })
-  }
+  // if (cache) {
+  //   console.log("using cache")
+  //   const uuid = uuidv4()
+  //   const { active } = await navigator.serviceWorker.ready
+  //   debugger
+  //   active.postMessage(JSON.stringify({ uuid, collection, options }))
+  //   return new Promise((resolve) => {
+  //     cachePromises[uuid] = resolve
+  //   })
+  // }
+  const result = await run(
+    cache ? "cached" : "query",
+    { body: { collection, options } },
+    { silent }
+  )
   return result
 }
 

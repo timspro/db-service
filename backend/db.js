@@ -9,6 +9,8 @@ export async function query({ collection, options: { ids, ...options } = {} }) {
   return snapshot.map((doc) => (ids ? doc.id : doc.data()))
 }
 
+export const cached = query
+
 function toFunction(string, context) {
   if (string) {
     return new Script(string).runInNewContext(context)
