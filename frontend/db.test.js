@@ -24,6 +24,7 @@ beforeEach(async () => {
 })
 
 autotest(query)(SANDBOX, { silent: true })(data)
+autotest(query)(SANDBOX, { silent: true, cache: true })(data)
 
 const queryAfter = { timeout: 10000, after: () => util.query(db, SANDBOX).then(util.unbox) }
 
@@ -51,11 +52,3 @@ const queryBothAfter = {
 autotest(copy, queryBothAfter)(SANDBOX, CLEAN, { where: [], silent: true })([data, data])
 
 autotest(move, queryBothAfter)(SANDBOX, CLEAN, { where: [], silent: true })([[], data])
-
-async function cacheSetup() {
-  await query(SANDBOX, { silent: true, cache: true })
-  await util.insert(db, SANDBOX, [[inserted.name, inserted]])
-  const elements = await util.query(db, SANDBOX).then(util.unbox)
-  expect(elements.length).toBe(3)
-}
-autotest(query, { setup: cacheSetup })(SANDBOX, { silent: true, cache: true })(data)

@@ -1,12 +1,39 @@
 import { Firestore } from "@google-cloud/firestore"
 import * as util from "@tim-code/firestore-util"
+import etag from "etag"
 import { Script } from "vm"
 
-const db = new Firestore()
+function getParameters(request) {
+  return {
+    ...request.query,
+    ...request.body,
+  }
+}
 
-export async function query({ collection, options: { ids, ...options } = {} }) {
-  const snapshot = await util.query(db, collection, options)
-  return snapshot.map((doc) => (ids ? doc.id : doc.data()))
+function respond(response, result) {
+  response.json({ result })
+}
+
+const db = new Firestore()
+export async function query(request, response) {
+  const parameters = getParameters(request)
+  let { collection, options = {} } = parameters
+  if (typeof options === "string") {
+    options = JSON.parse(options)
+  }
+  const hash = etag(JSON.stringify(parameters))
+  if (request.method === "GET" && request.get("If-None-Match") === hash) {
+    response.send(304)
+    return
+  }
+  const { ids, ...queryOptions } = options
+  const snapshot = await util.query(db, collection, queryOptions)
+  const result = snapshot.map((doc) => (ids ? doc.id : doc.data()))
+  if (request.method === "GET") {
+    response.setHeader("ETag", hash)
+    response.setHeader("Cache-Control", "private, max-age=3600")
+  }
+  respond(response, result)
 }
 
 function toFunction(string, context) {
@@ -16,27 +43,37 @@ function toFunction(string, context) {
   return undefined
 }
 
-export function copy({ collection, dest, name, transform, context, options }) {
+export async function copy(request, response) {
+  let { collection, dest, name, transform, context, options } = getParameters(request)
   name = toFunction(name, context)
   transform = toFunction(transform, context)
-  return util.copy(db, collection, dest, { ...options, name, transform })
+  const result = await util.copy(db, collection, dest, { ...options, name, transform })
+  respond(response, result)
 }
 
-export function move({ collection, dest, name, transform, context, options }) {
+export async function move(request, response) {
+  let { collection, dest, name, transform, context, options } = getParameters(request)
   name = toFunction(name, context)
   transform = toFunction(transform, context)
-  return util.move(db, collection, dest, { ...options, name, transform })
+  const result = await util.move(db, collection, dest, { ...options, name, transform })
+  respond(response, result)
 }
 
-export function remove({ collection, options }) {
-  return util.remove(db, collection, options)
+export async function remove(request, response) {
+  const { collection, options } = getParameters(request)
+  const result = await util.remove(db, collection, options)
+  respond(response, result)
 }
 
-export function insert({ collection, data, options }) {
-  return util.insert(db, collection, data, options)
+export async function insert(request, response) {
+  const { collection, data, options } = getParameters(request)
+  const result = await util.insert(db, collection, data, options)
+  respond(response, result)
 }
 
-export function update({ collection, transform, context, options }) {
+export async function update(request, response) {
+  let { collection, transform, context, options } = getParameters(request)
   transform = toFunction(transform, context)
-  return util.update(db, collection, { ...options, transform })
+  const result = await util.update(db, collection, { ...options, transform })
+  respond(response, result)
 }

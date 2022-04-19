@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "start": "concurrently \"npm run build -- --watch\" \"npm run backend -- --frontend dist --port 4000\"",
-    "backend": "server --log --routes backend --watch package-lock.json --postSize 10mb",
+    "backend": "server --log --routes backend --watch package-lock.json --postSize 10mb --expressRoute",
     "test": "ROUTES_DIR=backend node --no-warnings --experimental-vm-modules node_modules/.bin/jest --runInBand",
     "build": "npx webpack-cli -o \"${DIST:-./dist}\""
   },
@@ -13,13 +13,13 @@
   "license": "UNLICENSED",
   "devDependencies": {
     "@tim-code/autotest": "^1.0.2",
-    "@tim-code/eslint-config": "^0.7.1",
+    "@tim-code/eslint-config": "^0.7.3",
     "@tim-code/jest-config-server": "^0.3.2",
     "jest": "^27.5.1"
   },
   "dependencies": {
     "@google-cloud/firestore": "^5.0.2",
-    "@tim-code/browser-command": "^0.4.2",
+    "@tim-code/browser-command": "^0.5.3",
     "@tim-code/browser-util": "^0.3.1",
     "@tim-code/firestore-util": "^0.8.0",
     "@tim-code/server": "^0.9.0",

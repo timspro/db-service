@@ -2,35 +2,17 @@ import * as command from "@tim-code/browser-command"
 
 const run = command.factory(import.meta.url)
 
-const memory = new Map()
+const runCacheable = command.factory(import.meta.url, { method: "get" })
 
-export async function query(collection, { silent = false, cache = false, ...options } = {}) {
-  if (cache === true) {
-    cache = 3600
-  }
+export function query(collection, { silent = false, cache = false, ...options } = {}) {
   if (typeof options === "number") {
     options = { limit: options }
   }
-  const clauses = { collection, options }
-  const hash = JSON.stringify(clauses)
-  if (typeof cache === "number") {
-    const found = memory.get(hash)
-    if (found) {
-      const age = (Date.now() - found.timestamp) / 1000
-      if (age < cache) {
-        if (!silent) {
-          // eslint-disable-next-line no-console
-          console.log(found.result)
-        }
-        return found.result
-      }
-    }
+  options = JSON.stringify(options)
+  if (cache) {
+    return runCacheable("query", { collection, options }, { silent })
   }
-  const result = await run("query", clauses, { silent })
-  if (typeof cache === "number") {
-    memory.set(hash, { timestamp: Date.now(), result })
-  }
-  return result
+  return run("query", { collection, options }, { silent })
 }
 
 export function q(collection, where, options) {
