@@ -8,8 +8,8 @@ export function query(collection, { silent = false, cache = false, ...options } 
   if (typeof options === "number") {
     options = { limit: options }
   }
-  options = JSON.stringify(options)
   if (cache) {
+    options = JSON.stringify(options)
     return runCacheable("query", { collection, options }, { silent })
   }
   return run("query", { collection, options }, { silent })

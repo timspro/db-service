@@ -29,7 +29,8 @@ export async function query(request, response) {
   const { ids, ...queryOptions } = options
   const snapshot = await util.query(db, collection, queryOptions)
   const result = snapshot.map((doc) => (ids ? doc.id : doc.data()))
-  if (request.method === "GET") {
+  // only cache if there are results; does the database sometimes incorrectly return no results???
+  if (request.method === "GET" && result.length) {
     response.setHeader("ETag", hash)
     response.setHeader("Cache-Control", "private, max-age=3600")
   }
