@@ -23,7 +23,7 @@ export async function query(request, response) {
   }
   const hash = etag(JSON.stringify(parameters))
   if (request.method === "GET" && request.get("If-None-Match") === hash) {
-    response.send(304)
+    response.sendStatus(304)
     return
   }
   const { ids, ...queryOptions } = options
