@@ -14,20 +14,20 @@
   "license": "UNLICENSED",
   "devDependencies": {
     "@tim-code/autotest": "^1.0.2",
-    "@tim-code/eslint-config": "^0.7.3",
+    "@tim-code/eslint-config": "^0.7.4",
     "@tim-code/jest-config-server": "^0.3.2",
-    "jest": "^27.5.1"
+    "jest": "^28.1.2"
   },
   "dependencies": {
     "@google-cloud/firestore": "^5.0.2",
     "@tim-code/browser-command": "^0.5.3",
     "@tim-code/browser-util": "^0.3.1",
-    "@tim-code/firestore-util": "^0.8.0",
+    "@tim-code/firestore-util": "^0.8.2",
     "@tim-code/server": "^0.9.0",
-    "concurrently": "^7.1.0",
+    "concurrently": "^7.2.2",
     "etag": "^1.8.1",
-    "webpack": "^5.72.0",
-    "webpack-cli": "^4.9.2"
+    "webpack": "^5.73.0",
+    "webpack-cli": "^4.10.0"
   },
   "eslintConfig": {
     "extends": "@tim-code",
