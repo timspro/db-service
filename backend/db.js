@@ -1,7 +1,6 @@
 import { Firestore } from "@google-cloud/firestore"
 import * as util from "@tim-code/firestore-util"
 import etag from "etag"
-import { Script } from "vm"
 
 function getParameters(request) {
   return {
@@ -37,10 +36,11 @@ export async function query(request, response) {
   respond(response, result)
 }
 
+// eslint-disable-next-line no-unused-vars
 function toFunction(string, context) {
-  if (string) {
-    return new Script(string).runInNewContext(context)
-  }
+  // if (string) {
+  //   return new Script(string).runInNewContext(context)
+  // }
   return undefined
 }
 
